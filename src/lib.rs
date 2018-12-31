@@ -47,6 +47,16 @@ impl Config {
     }
 }
 
-pub struct Accumulator<T> {
-    pub sum: T
+pub struct Accumulator {
+    pub sum: f64
+}
+
+impl Accumulator {
+    pub fn new() -> Self {
+        Accumulator { sum: 0.0 }
+    }
+
+    pub fn add(&mut self, value: f64) {
+        self.sum += value;
+    }
 }
