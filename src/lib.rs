@@ -1,18 +1,23 @@
 pub struct Config {
     pub filename: String,
-    pub sum: bool
+    pub sum: bool,
+    pub avg: bool
 }
 
 enum Flag {
-    Sum
+    Sum,
+    Avg
 }
 
 impl Flag {
     fn parse(arg: &str) -> Option<Flag> {
         match arg.to_lowercase().as_ref() {
-            "-s"    => Some(Flag::Sum),
-            "--sum" => Some(Flag::Sum),
-            _       => None
+            "-s"     => Some(Flag::Sum),
+            "--sum"  => Some(Flag::Sum),
+            "-m"     => Some(Flag::Avg),
+            "--mean" => Some(Flag::Avg),
+            "--avg"  => Some(Flag::Avg),
+            _        => None
         }
     }
 }
@@ -27,7 +32,7 @@ impl Config {
 
     pub fn new(args: std::env::Args) -> Result<Config, String> {
         let mut filename_arg = None;
-        let mut config = Config { filename: String::from(""), sum: false };
+        let mut config = Config { filename: String::from(""), sum: false, avg: false };
         for arg in args {
             if !arg.starts_with("-") {
                 filename_arg = Some(arg);
@@ -48,15 +53,25 @@ impl Config {
 }
 
 pub struct Accumulator {
+    pub count: i64,
     pub sum: f64
 }
 
 impl Accumulator {
     pub fn new() -> Self {
-        Accumulator { sum: 0.0 }
+        Accumulator { count: 0, sum: 0.0 }
     }
 
     pub fn add(&mut self, value: f64) {
+        self.count += 1;
         self.sum += value;
+    }
+
+    pub fn avg(&self) -> f64 {
+        if self.count <= 0 {
+            0.0
+        } else {
+            self.sum / self.count as f64
+        }
     }
 }

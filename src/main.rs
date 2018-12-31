@@ -16,7 +16,11 @@ fn read_file(config: &Config) {
     }
 
     if config.sum {
-        println!("{}", acc.sum);
+        println!("sum: {}", acc.sum);
+    }
+
+    if config.avg {
+        println!("avg: {}", acc.avg());
     }
 }
 
