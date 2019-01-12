@@ -1,43 +1,29 @@
 pub struct Config {
     pub filename: String,
     pub sum: bool,
-    pub avg: bool
-}
-
-enum Flag {
-    Sum,
-    Avg
-}
-
-impl Flag {
-    fn parse(arg: &str) -> Option<Flag> {
-        match arg.to_lowercase().as_ref() {
-            "-s"     => Some(Flag::Sum),
-            "--sum"  => Some(Flag::Sum),
-            "-m"     => Some(Flag::Avg),
-            "--mean" => Some(Flag::Avg),
-            "--avg"  => Some(Flag::Avg),
-            _        => None
-        }
-    }
+    pub mean: bool
 }
 
 impl Config {
-    fn set_config_flag(arg: &str, config: &mut Config) {
-        match Flag::parse(arg) {
-            Some(Flag::Sum) => config.sum = true,
-            _ => ()
+    fn parse_short_flags(&mut self, arg: &str) {
+        for c in arg.chars().skip(1) {
+            println!("{}", c);
+            match c {
+                's' => self.sum = true,
+                'm' => self.mean = true,
+                _   => ()
+            }
         }
     }
 
     pub fn new(args: std::env::Args) -> Result<Config, String> {
         let mut filename_arg = None;
-        let mut config = Config { filename: String::from(""), sum: false, avg: false };
+        let mut config = Config { filename: String::from(""), sum: false, mean: false };
         for arg in args {
             if !arg.starts_with("-") {
                 filename_arg = Some(arg);
             } else {
-                Config::set_config_flag(&arg, &mut config);
+                config.parse_short_flags(&arg);
             }
         }
         match filename_arg {

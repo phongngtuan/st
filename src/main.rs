@@ -19,7 +19,7 @@ fn read_file(config: &Config) {
         println!("sum: {}", acc.sum);
     }
 
-    if config.avg {
+    if config.mean {
         println!("avg: {}", acc.avg());
     }
 }
