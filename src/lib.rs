@@ -1,7 +1,9 @@
 pub struct Config {
     pub filename: String,
     pub sum: bool,
-    pub mean: bool
+    pub mean: bool,
+    pub min: bool,
+    pub max: bool,
 }
 
 impl Config {
@@ -21,13 +23,15 @@ impl Config {
             "--sum"  => self.sum = true,
             "--mean" => self.mean = true,
             "--avg"  => self.mean = true,
+            "--min"  => self.min = true,
+            "--max"  => self.max = true,
             _        => ()
         }
     }
 
     pub fn new(args: std::env::Args) -> Result<Config, String> {
         let mut filename_arg = None;
-        let mut config = Config { filename: String::from(""), sum: false, mean: false };
+        let mut config = Config { filename: String::from(""), sum: false, mean: false, min: false, max: false};
 
         for arg in args {
             if !arg.starts_with("-") {
@@ -53,17 +57,27 @@ impl Config {
 
 pub struct Accumulator {
     pub count: i64,
-    pub sum: f64
+    pub sum: f64,
+    pub min: Option<f64>,
+    pub max: Option<f64>,
 }
 
 impl Accumulator {
     pub fn new() -> Self {
-        Accumulator { count: 0, sum: 0.0 }
+        Accumulator { count: 0, sum: 0.0, min: None, max: None }
     }
 
     pub fn add(&mut self, value: f64) {
         self.count += 1;
         self.sum += value;
+        self.min = match self.min {
+            Some(x) if x < value => Some(x),
+            _                    => Some(value)
+        };
+        self.max = match self.min {
+            Some(x) if x > value => Some(x),
+            _                    => Some(value)
+        };
     }
 
     pub fn avg(&self) -> f64 {

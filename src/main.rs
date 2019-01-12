@@ -22,6 +22,16 @@ fn read_file(config: &Config) {
     if config.mean {
         println!("avg: {}", acc.avg());
     }
+
+    match acc.min {
+        Some(x) if config.min => println!("min: {}", x),
+        _ => ()
+    }
+
+    match acc.max {
+        Some(x) if config.max => println!("min: {}", x),
+        _ => ()
+    }
 }
 
 fn main() {
