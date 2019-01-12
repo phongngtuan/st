@@ -14,13 +14,24 @@ fn read_file(config: &Config) {
         let value: f64 = line.unwrap().parse().unwrap();
         acc.add(value);
     }
+    acc.finalize();
 
     if config.sum {
         println!("sum: {}", acc.sum);
     }
 
     if config.mean {
-        println!("avg: {}", acc.avg());
+        println!("avg: {}", acc.mean);
+    }
+
+    match acc.variance {
+        Some(x) if config.variance => println!("variance: {}", x),
+        _ => ()
+    }
+
+    match acc.stddev {
+        Some(x) if config.stddev => println!("stddev: {}", x),
+        _ => ()
     }
 
     match acc.min {
