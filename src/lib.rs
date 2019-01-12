@@ -5,8 +5,8 @@ pub struct Config {
 }
 
 impl Config {
-    fn parse_short_flags(&mut self, arg: &str) {
-        for c in arg.chars().skip(1) {
+    fn parse_short_flags(&mut self, flags: &str) {
+        for c in flags.chars().skip(1) {
             println!("{}", c);
             match c {
                 's' => self.sum = true,
@@ -16,16 +16,29 @@ impl Config {
         }
     }
 
+    fn parse_long_flags(&mut self, flags: &str) {
+        match flags.as_ref() {
+            "--sum"  => self.sum = true,
+            "--mean" => self.mean = true,
+            "--avg"  => self.mean = true,
+            _        => ()
+        }
+    }
+
     pub fn new(args: std::env::Args) -> Result<Config, String> {
         let mut filename_arg = None;
         let mut config = Config { filename: String::from(""), sum: false, mean: false };
+
         for arg in args {
             if !arg.starts_with("-") {
                 filename_arg = Some(arg);
+            } else if arg.starts_with("--") {
+                config.parse_long_flags(&arg);
             } else {
                 config.parse_short_flags(&arg);
             }
         }
+
         match filename_arg {
             None => {
                 Err(String::from("no filename provided"))
